@@ -23,7 +23,6 @@
 `define OR_FN 		4'b0101
 `define XOR_FN 		4'b0110
 `define MASK_FN 	4'b0111
-`define ADD_SIGNED 	4'b1000
 `define SHL_FN 		4'b1100
 `define SHR_FN 		4'b1101
 `define ROL_FN 		4'b1110

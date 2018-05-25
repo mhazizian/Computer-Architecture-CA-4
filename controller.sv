@@ -112,7 +112,7 @@ module Controller(
 				sel_PC_src_plus1 = 1;
 			end
 			`MEMORY_TYPE_OPCODE : begin
-				ALU_op = `ADD_SIGNED;
+				ALU_op = `ADD_FN;
 				sel_ALU_src_const = 1;
 				
 				sel_PC_src_plus1 = 1;

@@ -21,7 +21,7 @@ module InstructionMemory(rst, address, instruction);
 		ins_memory[7] 	<= {3'b100, 2'b00, 3'b010, 3'b000, 8'b01100111}; 			// load-memory: R0(103) to R2
 		ins_memory[8] 	<= {2'b00, 3'b001, 3'b011, 3'b001, 3'b010, 5'b00110}; 		// R3 = R1 + R2 + ci
 		ins_memory[9] 	<= {3'b100, 2'b01, 3'b011, 3'b000, 8'b01101001}; 			// save-memory: R3 to R0(105)
-*/
+
 
 		// Program 2
 
@@ -53,8 +53,8 @@ module InstructionMemory(rst, address, instruction);
 		ins_memory[16] 	<= {3'b110, 2'b11, 3'b111, 3'b111, 3'b100, 5'b00000};		// R7 = R7 Rotate right 2
 		
 //		ins_memory[13] 	<= {3'b110, 2'b00, 3'b111, 3'b111, 3'b010, 5'b00000};
-
-	/*	
+*/
+	
 		// Bubble Sort
 		
 		ins_memory[1] 	<= {2'b00, 3'b000, 3'b001, 3'b000, 3'b000, 5'b00000}; 		// R1 = R0 + R0
@@ -93,8 +93,6 @@ module InstructionMemory(rst, address, instruction);
 		// EXIT_FIRST_FOR
 		
 		ins_memory[17] 	<= 19'b0000000000000000000; 
-		
-	*/
 		
 	end
 
