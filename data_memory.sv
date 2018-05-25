@@ -6,10 +6,14 @@ module DataMemory(clk, rst, Address, WriteData, MemRead, MemWrite, ReadData);
 
 	reg[7:0] data[0:255];
 
-	always @(rst, MemRead, Address) begin
+	always @(MemRead, Address) begin
 		if (MemRead) ReadData = data[Address];
 	end
 
+	always @(Address, MemWrite, WriteData) begin
+		if (MemWrite) data[Address] = WriteData;
+	end
+	
 	always @(posedge clk, rst) begin
 		if (rst) begin
 			data = '{default:8'b0};
@@ -38,10 +42,7 @@ module DataMemory(clk, rst, Address, WriteData, MemRead, MemWrite, ReadData);
 			data[119] = 8'b11100000;
 			
 			data[120] = 8'b11111111;
-
 		end
-
-		if (MemWrite) data[Address] = WriteData;
 	end
 
 endmodule

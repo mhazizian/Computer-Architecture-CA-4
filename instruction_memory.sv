@@ -6,6 +6,10 @@ module InstructionMemory(rst, address, instruction);
 
 	reg[18:0] ins_memory[0:4095];
 
+	always @(address) begin
+		instruction <= ins_memory[address];
+	end
+	
 	always @(posedge rst) begin
 		ins_memory <= '{default:19'b0};
 
@@ -95,9 +99,5 @@ module InstructionMemory(rst, address, instruction);
 		ins_memory[17] 	<= 19'b0000000000000000000; 
 		
 	end
-
-	always @(address) begin
-		instruction <= ins_memory[address];
-	end
-
+	
 endmodule
