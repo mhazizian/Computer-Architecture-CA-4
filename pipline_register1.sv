@@ -1,8 +1,8 @@
 `include "defines.sv"
 
-module PR_1_IF_ID(clk, rst, PR0_PC_plus1, PR0_instruction_in, PR1_PC_plus1, PR1_instruction);
+module PR_1_IF_ID(clk, rst, PR0_PC_plus1, PR0_instruction, PR1_PC_plus1, PR1_instruction);
 	input clk, rst;
-	input [`INSTRUCTION_LEN - 1:0] PR0_instruction_in;
+	input [`INSTRUCTION_LEN - 1:0] PR0_instruction;
 	input [`ADDRESS_LEN - 1:0] PR0_PC_plus1;
 
 	output logic [`INSTRUCTION_LEN - 1:0] PR1_instruction;
@@ -15,7 +15,7 @@ module PR_1_IF_ID(clk, rst, PR0_PC_plus1, PR0_instruction_in, PR1_PC_plus1, PR1_
 		end
 		else begin
 			PR1_PC_plus1 <= PR0_PC_plus1;
-			PR1_instruction <= PR0_instruction_in;
+			PR1_instruction <= PR0_instruction;
 		end
 	end
 endmodule // PR_1_IF_ID
