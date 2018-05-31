@@ -1,19 +1,21 @@
-`include "defines.v"
+`include "defines.sv"
 
-module PR_1_IF_ID(clk, rst, PC_in, Instruction_in, PC, Instruction)
+module PR_1_IF_ID(clk, rst, PC_in, Instruction_in, PR1_PC, PR1_Instruction);
 	input clk, rst;
 	input [`INSTRUCTION_LEN - 1:0] Instruction_in;
 	input [`ADDRESS_LEN - 1:0] PC_in;
 
-	output logic [`INSTRUCTION_LEN - 1:0] Instruction;
-	output logic [`ADDRESS_LEN - 1:0] PC;
+	output logic [`INSTRUCTION_LEN - 1:0] PR1_Instruction;
+	output logic [`ADDRESS_LEN - 1:0] PR1_PC;
 
-	@always(posedge clk, posedge rst) begin
-		if(rst)
-			{PC, Instruction} <= 0;
+	always@(posedge clk, posedge rst) begin
+		if(rst) begin
+			PR1_PC <= 0;
+			PR1_Instruction <= 0;
+		end
 		else begin
-			PC <= PC_in;
-			Instruction <= Instruction_in;
+			PR1_PC <= PC_in;
+			PR1_Instruction <= Instruction_in;
 		end
 	end
 endmodule // PR_1_IF_ID
