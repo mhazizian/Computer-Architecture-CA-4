@@ -1,6 +1,6 @@
 `include "defines.sv"
 
-module PR_2_ID_EX(clk, rst, PR1_instruction, PR1_RF_out1, PR1_RF_out2, PR1_ALU_op, PR1_sel_ALU_src_reg2, 
+module PR2_ID_EX(clk, rst, PR1_instruction, PR1_RF_out1, PR1_RF_out2, PR1_ALU_op, PR1_sel_ALU_src_reg2, 
 	PR1_sel_ALU_src_const, PR1_MEM_write, PR1_MEM_read, PR1_sel_RF_write_src_ALU, PR1_sel_RF_write_src_MEM,
 	 PR1_RF_write_en, PR1_sel_Cin_alu,
 	PR1_sel_ALU_src_shift_count,

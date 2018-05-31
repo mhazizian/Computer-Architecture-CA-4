@@ -1,6 +1,6 @@
 `include "defines.sv"
 
-module PR_1_IF_ID(clk, rst, PR3_MEM_out, PR3_alu_out, PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
+module PR4_MEM_WB(clk, rst, PR3_MEM_out, PR3_alu_out, PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
 		PR3_RF_Wdata, PR3_RF_write_en,
 		//outputs
 		PR4_MEM_out, PR4_alu_out, PR4_sel_RF_write_src_MEM, PR4_sel_RF_write_src_ALU, PR4_RF_Wdata, PR4_RF_write_en

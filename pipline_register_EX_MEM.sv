@@ -8,7 +8,8 @@ module PR3_EX_MEM(
 
 	PR2_ALU_op,   PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, PR2_sel_RF_write_src_MEM,
 	PR2_RF_write_en, PR2_sel_Cin_alu,
-	PR3_sel_RF_write_src_MEM,  PR3_RF_write_en, PR3_sel_Cin_alu, PR3_sel_RF_write_src_ALU;
+	PR3_sel_RF_write_src_MEM,  PR3_RF_write_en, PR3_sel_Cin_alu, PR3_sel_RF_write_src_ALU
+	);
 
 
 	input clk, rst;
