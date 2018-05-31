@@ -6,9 +6,10 @@ module PR3_EX_MEM(
 	PR3_MEM_write, PR3_MEM_read,
 	PR2_instruction, PR3_instruction,
 
-	PR2_ALU_op,   PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, PR2_sel_RF_write_src_MEM,
+	PR2_ALU_op, PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, PR2_sel_RF_write_src_MEM,
 	PR2_RF_write_en, PR2_sel_Cin_alu,
 	PR3_sel_RF_write_src_MEM,  PR3_RF_write_en, PR3_sel_Cin_alu, PR3_sel_RF_write_src_ALU
+	PR2_RF_out2, PR3_RF_out2
 	);
 
 
@@ -18,10 +19,10 @@ module PR3_EX_MEM(
 
 	input [3:0] PR2_ALU_op;
 
-	input [`WORD_LEN - 1:0] PR2_alu_out;
+	input [`WORD_LEN - 1:0] PR2_alu_out, PR2_RF_out2;
 	input [`INSTRUCTION_LEN - 1:0] PR2_instruction;
 
-	output logic [`WORD_LEN - 1:0] PR3_alu_out;
+	output logic [`WORD_LEN - 1:0] PR3_alu_out, PR3_RF_out2;
 	output logic [`INSTRUCTION_LEN - 1:0] PR3_instruction;
 
 	output logic [3:0] PR3_ALU_op;
@@ -38,8 +39,7 @@ module PR3_EX_MEM(
 			} <= 0;
 		end
 		else begin
-			PR3_instruction <= PR2_instruction ;
-			PR3_RF_out1 <= PR2_RF_out1;
+			PR3_instruction <= PR2_instruction;
 			PR3_RF_out2 <= PR2_RF_out2;
 			PR3_MEM_write <= PR2_MEM_write;
 			PR3_MEM_read <= PR2_MEM_read;
