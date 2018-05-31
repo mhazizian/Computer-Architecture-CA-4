@@ -1,3 +1,9 @@
+// LENGHTs
+
+`define INSTRUCTION_LEN 19
+`define ADDRESS_LEN		12
+`define WORD_LEN		8
+
 // OPCODEs
 
 `define REGISTER_TYPE_OPCODE 				2'b00
