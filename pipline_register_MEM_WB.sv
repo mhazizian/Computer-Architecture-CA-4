@@ -20,10 +20,10 @@ module PR4_MEM_WB(clk, rst, PR3_MEM_out, PR3_alu_out, PR3_sel_RF_write_src_MEM, 
 
 	always@(posedge clk, posedge rst) begin
 		if(rst) begin
-			{
-				PR4_MEM_out, PR4_alu_out, PR4_sel_RF_write_src_MEM, PR4_sel_RF_write_src_ALU,
-				PR4_RF_write_en, PR4_instruction
-			} <= 0;
+			// {
+			// 	PR4_MEM_out, PR4_alu_out, PR4_sel_RF_write_src_MEM, PR4_sel_RF_write_src_ALU,
+			// 	PR4_RF_write_en, PR4_instruction
+			// } <= 0;
 		end
 		else begin
 			PR4_MEM_out <= PR3_MEM_out;
