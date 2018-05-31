@@ -15,7 +15,7 @@ module data_path(clk, rst);
 		PR4_RF_write_en, PR1_sel_RF_read_reg2_src,	
 		PR1_push_stack, PR1_pop_stack, PR3_MEM_read, 	
 		PR3_MEM_write, 	PR4_sel_RF_write_src_MEM, 	
-		PR4_sel_RF_write_src_ALU, Z_in_alu;
+		PR4_sel_RF_write_src_ALU, Z_in_alu,
 
 		PR1_sel_ALU_src_reg2, 
 		PR1_sel_ALU_src_const, PR1_MEM_write, PR1_MEM_read,
@@ -195,7 +195,7 @@ module data_path(clk, rst);
 		// Output
 		.PR3_instruction(PR3_instruction), .PR3_MEM_write(PR3_MEM_write), .PR3_MEM_read(PR3_MEM_read),
 		.PR3_sel_RF_write_src_MEM(PR3_sel_RF_write_src_MEM), .PR3_RF_write_en(PR3_RF_write_en),
-		.PR3_sel_Cin_alu(PR3_sel_Cin_alu), .PR3_sel_RF_write_src_ALU(PR3_sel_RF_write_src_ALU)
+		.PR3_sel_Cin_alu(PR3_sel_Cin_alu), .PR3_sel_RF_write_src_ALU(PR3_sel_RF_write_src_ALU),
 		.PR2_RF_out2(PR2_RF_out2), .PR3_RF_out2(PR3_RF_out2)
 
 	);
