@@ -95,7 +95,7 @@ module data_path(clk, rst);
 
 	adder #(.WORD_LENGTH(12)) PC_adder(
 	
-	.first(pc_plus1), .second({4'b0, instruction[7:0]}), .out(pc_plus_offset)
+	.first(pc_plus1), .second({4'b0, instruction[7:0]}), .out(pc_plus_offset) // Handling sign extend
 	
 	);
 	
@@ -186,7 +186,11 @@ module data_path(clk, rst);
 	// Data Memory block
 	
 	
-	DataMemory data_MEM(clk, rst, alu_out, register_file_out2, MEM_read, MEM_write, data_memory_out);
+	DataMemory data_MEM(.clk(clk), .rst(rst), .Address(alu_out), 
+	
+	.WriteData(register_file_out2), .MemRead(MEM_read), 
+	
+	.MemWrite(MEM_write), .ReadData(data_memory_out));
 	
 	
 	
