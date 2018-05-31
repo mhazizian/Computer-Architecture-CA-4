@@ -28,9 +28,7 @@ module data_path(clk, rst);
 		PR2_sel_RF_write_src_MEM,  PR2_RF_write_en, PR2_sel_Cin_alu,
 		PR2_sel_ALU_src_shift_count,
 		PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
-		PR3_RF_Wdata, PR3_RF_write_en,
-
-		PR4_sel_RF_write_src_ALU, PR4_RF_Wdata
+		PR3_RF_Wdata, PR3_RF_write_en;
 	
 	logic [`INSTRUCTION_LEN - 1 : 0] PR0_instruction,
 		PR1_instruction, PR2_instruction, PR3_instruction, 	
@@ -241,7 +239,7 @@ module data_path(clk, rst);
 		.PR4_sel_RF_write_src_ALU(PR4_sel_RF_write_src_ALU),
 		.PR4_RF_write_en(PR4_RF_write_en),
 		.PR3_RF_out2(PR3_RF_out2), .PR4_RF_out2(PR4_RF_out2),
-		.PR4_instruction(PR4_instruction),
+		.PR4_instruction(PR4_instruction)
 	);
 
 	// #########################################
