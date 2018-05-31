@@ -26,7 +26,7 @@ module data_path(clk, rst);
 		PR2_sel_ALU_src_reg2, PR2_sel_ALU_src_const, PR2_MEM_write,
 		PR2_MEM_read, PR2_sel_RF_write_src_ALU, 
 		PR2_sel_RF_write_src_MEM,  PR2_RF_write_en, PR2_sel_Cin_alu,
-		PR2_sel_ALU_src_shift_count
+		PR2_sel_ALU_src_shift_count,
 		PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
 		PR3_RF_Wdata, PR3_RF_write_en,
 
@@ -187,8 +187,8 @@ module data_path(clk, rst);
 	
 	PR3_EX_MEM(
 		.clk(clk), .rst(rst), .PR2_alu_out(PR2_alu_out), 
-		.PR2_alu_out(PR2_alu_out), .PR2_instruction(PR2_instruction),
-		.PR2_ALU_op(PR2_ALU_op), .PR2_MEM_write(PR2_MEM_write), .PR2_MEM_read(PR2_MEM_read),
+		.PR2_instruction(PR2_instruction), .PR2_MEM_read(PR2_MEM_read),
+		.PR2_ALU_op(PR2_ALU_op), .PR2_MEM_write(PR2_MEM_write),
 		.PR2_sel_RF_write_src_ALU(PR2_sel_RF_write_src_ALU), .PR2_sel_RF_write_src_MEM(PR2_sel_RF_write_src_MEM),
 		.PR2_RF_write_en(PR2_RF_write_en), .PR2_sel_Cin_alu(PR2_sel_Cin_alu),
 		
@@ -233,13 +233,15 @@ module data_path(clk, rst);
 		.PR3_sel_RF_write_src_MEM(PR3_sel_RF_write_src_MEM),
 		.PR3_sel_RF_write_src_ALU(PR3_sel_RF_write_src_ALU),
 		.PR3_RF_write_en(PR3_RF_write_en),
+		.PR3_instruction(PR3_instruction),
 
 		// Outputs
 		.PR4_MEM_out(PR4_MEM_out), .PR4_alu_out(PR4_alu_out),
 		.PR4_sel_RF_write_src_MEM(PR4_sel_RF_write_src_MEM),
 		.PR4_sel_RF_write_src_ALU(PR4_sel_RF_write_src_ALU),
 		.PR4_RF_write_en(PR4_RF_write_en),
-		.PR3_RF_out2(PR3_RF_out2), .PR4_RF_out2(PR4_RF_out2)
+		.PR3_RF_out2(PR3_RF_out2), .PR4_RF_out2(PR4_RF_out2),
+		.PR4_instruction(PR4_instruction),
 	);
 
 	// #########################################

@@ -9,11 +9,11 @@ module PR4_MEM_WB(clk, rst, PR3_MEM_out, PR3_alu_out, PR3_sel_RF_write_src_MEM, 
 	);
 
 	input clk, rst;
-	input PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU, PR3_RF_write_en
+	input PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU, PR3_RF_write_en;
 	input [`INSTRUCTION_LEN - 1:0] PR3_instruction;
 	input [`WORD_LEN - 1:0] PR3_MEM_out, PR3_alu_out, PR3_RF_out2;
 
-	output logic PR4_sel_RF_write_src_MEM, PR4_sel_RF_write_src_ALU, PR4_RF_write_en
+	output logic PR4_sel_RF_write_src_MEM, PR4_sel_RF_write_src_ALU, PR4_RF_write_en;
 
 	output logic [`INSTRUCTION_LEN - 1:0] PR4_instruction;
 	output logic [`WORD_LEN - 1:0] PR4_MEM_out, PR4_alu_out, PR4_RF_out2;
