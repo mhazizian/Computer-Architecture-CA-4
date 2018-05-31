@@ -7,7 +7,7 @@ module register #(parameter integer WORD_LENGTH) (clk, rst, ld, in, out);
 	always@(posedge clk, posedge rst) 
 	begin
 		if (ld) out <= in;
-		if (rst) out <= 0;
+		if (rst) out <= 1;
 	end
 	
 endmodule

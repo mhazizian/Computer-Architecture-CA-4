@@ -17,8 +17,10 @@ module register_file #(parameter integer WORD_LENGTH, ID_LENGTH) (
 	genvar i;
 	
 // Generate 4 regsiters
-		
-	generate for (i = 0; i < WORD_LENGTH; i = i + 1)
+
+	register #(.WORD_LENGTH(WORD_LENGTH)) register0(.clk(clk), .rst(rst), .ld(ld_reg[0]), .in(0), .out(acc[0]));
+
+	generate for (i = 1; i < WORD_LENGTH; i = i + 1)
 		begin
 			register #(.WORD_LENGTH(WORD_LENGTH)) registers(.clk(clk), .rst(rst), .ld(ld_reg[i]), .in(write_data), .out(acc[i]));
 		end
