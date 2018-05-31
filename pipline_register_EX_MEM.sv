@@ -1,12 +1,33 @@
 `include "defines.sv"
 
 module PR3_EX_MEM(
-	clk, rst, PR2_alu_out, PR3_alu_out,
+
+	clk, rst, PR2_alu_out, PR2_alu_out,
 	PR3_MEM_write, PR3_MEM_read,
-	PR2_instruction, PR3_instruction
+	PR2_instruction, PR3_instruction,
+
+	PR2_ALU_op, PR2_sel_ALU_src_reg2, 
+	PR2_sel_ALU_src_const, PR2_sel_PC_src_offset, PR2_sel_PC_src_const, PR2_sel_PC_src_plus1, 
+	PR2_sel_PC_src_stack, PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, PR2_sel_RF_write_src_MEM,
+	PR2_sel_RF_read_reg2_src, PR2_RF_write_en, PR2_sel_Cin_alu, PR2_push_stack, PR2_pop_stack,
+	PR2_sel_ALU_src_shift_count,
+
+	// outputs:
+
+	PR3_sel_ALU_src_reg2, PR3_sel_ALU_src_const, PR3_sel_PC_src_offset, PR3_sel_PC_src_const, 
+	PR3_sel_PC_src_plus1, PR3_sel_PC_src_stack, PR3_MEM_write, PR3_MEM_read, PR3_sel_RF_write_src_ALU, 
+	PR3_sel_RF_write_src_MEM, PR3_sel_RF_read_reg2_src,  PR3_RF_write_en, PR3_sel_Cin_alu,
+	PR3_push_stack, PR3_pop_stack, PR3_sel_ALU_src_shift_count
 	);
 
+
 	input clk, rst;
+	input PR2_sel_ALU_src_reg2, PR2_sel_ALU_src_const, PR2_sel_PC_src_offset, PR2_sel_PC_src_const, 
+		PR2_sel_PC_src_plus1, PR2_sel_PC_src_stack, PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, 
+		PR2_sel_RF_write_src_MEM, PR2_sel_RF_read_reg2_src,  PR2_RF_write_en, PR2_sel_Cin_alu,
+		PR2_push_stack, PR2_pop_stack, PR2_sel_ALU_src_shift_count;
+
+	input [3:0] PR2_ALU_op;
 
 	input [`WORD_LEN - 1:0] PR2_alu_out;
 	input [`INSTRUCTION_LEN - 1:0] PR2_instruction;
@@ -14,12 +35,45 @@ module PR3_EX_MEM(
 	output logic [`WORD_LEN - 1:0] PR3_alu_out;
 	output logic [`INSTRUCTION_LEN - 1:0] PR3_instruction;
 
+	output logic [3:0] PR3_ALU_op;
+
+	output logic PR3_sel_ALU_src_reg2, PR3_sel_ALU_src_const, PR3_sel_PC_src_offset, PR3_sel_PC_src_const, 
+		PR3_sel_PC_src_plus1, PR3_sel_PC_src_stack, PR3_MEM_write, PR3_MEM_read, PR3_sel_RF_write_src_ALU, 
+		PR3_sel_RF_write_src_MEM, PR3_sel_RF_read_reg2_src,  PR3_RF_write_en, PR3_sel_Cin_alu,
+		PR3_push_stack, PR3_pop_stack, PR3_sel_ALU_src_shift_count;
+
+
 	always@(posedge clk, posedge rst) begin
 		if(rst) begin
-			//
+			{
+				PR3_instruction, PR3_RF_out, PR3_RF_out, PR3_sel_ALU_src_reg2,
+				PR3_sel_ALU_src_const, PR3_sel_PC_src_offset, PR3_sel_PC_src_const, 
+				PR3_sel_PC_src_plus1, PR3_sel_PC_src_stack, PR3_MEM_write, PR3_MEM_read, PR3_sel_RF_write_src_ALU, 
+				PR3_sel_RF_write_src_MEM, PR3_sel_RF_read_reg2_src,  PR3_RF_write_en, PR3_sel_Cin_alu,
+				PR3_push_stack, PR3_pop_stack, PR3_sel_ALU_src_shift_count, PR3_ALU_op
+			} <= 0;
 		end
 		else begin
-			//
+			PR3_instruction <= PR2_instruction ;
+			PR3_RF_out1 <= PR2_RF_out1;
+			PR3_RF_out2 <= PR2_RF_out2;
+			PR3_sel_ALU_src_reg2 <= PR2_sel_ALU_src_reg2;
+			PR3_sel_ALU_src_const <= PR2_sel_ALU_src_const;
+			PR3_sel_PC_src_offset <= PR2_sel_PC_src_offset;
+			PR3_sel_PC_src_const <= PR2_sel_PC_src_const;
+			PR3_sel_PC_src_plus1 <= PR2_sel_PC_src_plus1;
+			PR3_sel_PC_src_stack <= PR2_sel_PC_src_stack;
+			PR3_MEM_write <= PR2_MEM_write;
+			PR3_MEM_read <= PR2_MEM_read;
+			PR3_sel_RF_write_src_ALU <= PR2_sel_RF_write_src_ALU;
+			PR3_sel_RF_write_src_MEM <= PR2_sel_RF_write_src_MEM;
+			PR3_sel_RF_read_reg2_src <= PR2_sel_RF_read_reg2_src;
+			PR3_RF_write_en <= PR2_RF_write_en;
+			PR3_sel_Cin_alu <= PR2_sel_Cin_alu;
+			PR3_push_stack <= PR2_push_stack;
+			PR3_pop_stack <= PR2_pop_stack;
+			PR3_sel_ALU_src_shift_count <= PR2_sel_ALU_src_shift_count;
+			PR3_ALU_op <= PR2_ALU_op;
 		end
 	end
-endmodule
+endmodule // PR3_EX_MEM

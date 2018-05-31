@@ -54,7 +54,7 @@ module data_path(clk, rst);
 		
 	logic [2:0] register_file_reg2_input;
 	
-	logic [3:0] ALU_op, PR2_ALU_op;
+	logic [3:0] PR1_ALU_op, PR2_ALU_op;
 
 	// ###############################
 	// ########### STAGE 0 ###########
