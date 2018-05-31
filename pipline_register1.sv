@@ -1,21 +1,21 @@
 `include "defines.sv"
 
-module PR_1_IF_ID(clk, rst, PC_plus1, Instruction_in, PR1_PC_plus1, PR1_Instruction);
+module PR_1_IF_ID(clk, rst, PR1_PC_plus1, PR1_instruction_in, PC_plus1, instruction);
 	input clk, rst;
-	input [`INSTRUCTION_LEN - 1:0] Instruction_in;
-	input [`ADDRESS_LEN - 1:0] PC_plus1;
+	input [`INSTRUCTION_LEN - 1:0] PR1_instruction_in;
+	input [`ADDRESS_LEN - 1:0] PR1_PC_plus1;
 
 	output logic [`INSTRUCTION_LEN - 1:0] PR1_Instruction;
-	output logic [`ADDRESS_LEN - 1:0] PR1_PC_plus1;
+	output logic [`ADDRESS_LEN - 1:0] PC_plus1;
 
 	always@(posedge clk, posedge rst) begin
 		if(rst) begin
-			PR1_PC_plus1 <= 0;
-			PR1_Instruction <= 0;
+			PC_plus1 <= 0;
+			instruction <= 0;
 		end
 		else begin
-			PR1_PC_plus1 <= PC_plus1;
-			PR1_Instruction <= Instruction_in;
+			PC_plus1 <= PR1_PC_plus1;
+			instruction <= PR1_instruction_in;
 		end
 	end
 endmodule // PR_1_IF_ID
