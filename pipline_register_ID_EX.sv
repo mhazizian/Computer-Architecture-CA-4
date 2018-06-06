@@ -39,7 +39,7 @@ module PR2_ID_EX(clk, rst, flush, PR1_instruction, PR1_RF_out1, PR1_RF_out2, PR1
 
 
 	always@(posedge clk, posedge rst) begin
-		if(rst, flush) begin
+		if(rst || flush) begin
 			{
 				PR2_instruction, PR2_RF_out1, PR2_RF_out2, PR2_sel_ALU_src_reg2,
 				PR2_sel_ALU_src_const, PR2_MEM_write, PR2_MEM_read, PR2_sel_RF_write_src_ALU, 

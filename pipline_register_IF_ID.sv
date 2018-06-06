@@ -9,7 +9,7 @@ module PR1_IF_ID(clk, rst, write_en, flush, PR0_PC_plus1, PR0_instruction, PR1_P
 	output logic [`ADDRESS_LEN - 1:0] PR1_PC_plus1;
 
 	always@(posedge clk, posedge rst) begin
-		if(rst, flush) begin
+		if(rst || flush) begin
 			PR1_PC_plus1 <= 0;
 			PR1_instruction <= 0;
 		end

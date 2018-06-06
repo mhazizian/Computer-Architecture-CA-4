@@ -23,12 +23,12 @@ module data_path(clk, rst);
 		PR2_sel_ALU_src_reg2, PR2_sel_ALU_src_const, PR2_MEM_write,
 		PR2_MEM_read, PR2_sel_RF_write_src_ALU, 
 		PR2_sel_RF_write_src_MEM,  PR2_RF_write_en, PR2_sel_Cin_alu,
-		PR2_sel_ALU_src_shift_count,
+		PR2_sel_ALU_src_shift_count, PR3_sel_Cin_alu,
 		PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
 		PR3_RF_write_en, 
 
 		PR1_IF_ID_write_en, PC_write_en, control_signals_en,
-		MEM_write, RF_write_en, flush;
+		MEM_write, RF_write_en, flush_PR1, flush_PR2;
 	
 	logic [`INSTRUCTION_LEN - 1 : 0] PR0_instruction,
 		PR1_instruction, PR2_instruction, PR3_instruction, 	
@@ -51,6 +51,8 @@ module data_path(clk, rst);
 	logic [1:0] forwardA, forwardB;
 	
 	logic [3:0] PR1_ALU_op, PR2_ALU_op;
+
+	logic PR1_is_equal;
 
 	// ###############################
 	// ########### STAGE 0 ###########
@@ -76,7 +78,7 @@ module data_path(clk, rst);
 	
 	// PIPE-LINE REGISTERS
 
-	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .flush(flush), .PR0_PC_plus1(PR0_PC_plus1),
+	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .flush(flush_PR1), .PR0_PC_plus1(PR0_PC_plus1),
 		.PR0_instruction(PR0_instruction),.PR1_PC_plus1(PR1_PC_plus1), .PR1_instruction(PR1_instruction),
 		.write_en(PR1_IF_ID_write_en)
 	);
@@ -95,10 +97,10 @@ module data_path(clk, rst);
 		.Z_out(Z_out), .ALU_op(PR1_ALU_op), 
 		.sel_ALU_src_reg2(PR1_sel_ALU_src_reg2), 	
 		.sel_ALU_src_const(PR1_sel_ALU_src_const),	
-		.sel_PC_src_offset(PR1_sel_PC_src_offset), 	
-		.sel_PC_src_const(PR1_sel_PC_src_const), 	
-		.sel_PC_src_plus1(PR1_sel_PC_src_plus1), 	
-		.sel_PC_src_stack(PR1_sel_PC_src_stack),	
+		// .sel_PC_src_offset(PR1_sel_PC_src_offset), 	
+		// .sel_PC_src_const(PR1_sel_PC_src_const), 	
+		// .sel_PC_src_plus1(PR1_sel_PC_src_plus1), 	
+		// .sel_PC_src_stack(PR1_sel_PC_src_stack),	
 		.MEM_write(MEM_write),
 		.MEM_read(PR1_MEM_read),	
 		.sel_RF_write_src_ALU(PR1_sel_RF_write_src_ALU), 	
@@ -106,8 +108,8 @@ module data_path(clk, rst);
 		.sel_RF_read_reg2_src(PR1_sel_RF_read_reg2_src), 	
 		.RF_write_en(RF_write_en),	
 		.sel_Cin_alu(PR1_sel_Cin_alu),
-		.push_stack(PR1_push_stack),
-		.pop_stack(PR1_pop_stack),	
+		// .push_stack(PR1_push_stack),
+		// .pop_stack(PR1_pop_stack),	
 		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count)
 	);
 
@@ -123,6 +125,7 @@ module data_path(clk, rst);
 		.read_data1(PR1_RF_out1), .read_data2(PR1_RF_out2)	
 	);
 	
+	assign PR1_is_equal = ((PR1_RF_out1 == PR1_RF_out2) ? 1 : 0); 
 		
 	mux_2_to_1 #(.WORD_LENGTH(3)) MUX_RF_second_src(	
 		.first(PR1_instruction[13:11]), .second(PR1_instruction[7:5]), 
@@ -135,14 +138,22 @@ module data_path(clk, rst);
 	
 	Stack stack(.clk(clk), .address(PR1_PC_plus1), .push(PR1_push_stack), .pop(PR1_pop_stack), .stack_out(stack_out));	
 	
-	
+	// Jump controller
+
+	jump_controller jump_controller(
+		.opcode(PR1_instruction[18:13]), .is_equal(PR1_is_equal),
+		.push_stack(PR1_push_stack), .pop_stack(PR1_pop_stack), 
+		.sel_PC_src_const(sel_PC_src_const), .sel_PC_src_offset(sel_PC_src_offset),
+		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1)
+	);
+
 	// PC block
 
 
 	adder #(.WORD_LENGTH(12)) PC_adder(
-		.first(PR1_PC_plus1), .second({4{PR1_instruction[7]}, PR1_instruction[7:0]}), 
-		.out(pc_plus_offset) // Handling sign extend 
-		
+		.first(PR1_PC_plus1), 
+		.second({PR1_instruction[7], PR1_instruction[7], PR1_instruction[7], PR1_instruction[7], PR1_instruction[7:0]}), 
+		.out(pc_plus_offset)	
 	);
 
 	mux_2_to_1 #(.WORD_LENGTH(2)) MUX_hazard_unit(	
@@ -153,13 +164,13 @@ module data_path(clk, rst);
 
 	// PIPE-LINE REGISTERS
 
-	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .flush(flush), .PR1_instruction(PR1_instruction),
+	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .flush(flush_PR2), .PR1_instruction(PR1_instruction),
 		.PR1_RF_out1(PR1_RF_out1), .PR1_RF_out2(PR1_RF_out2),
 		.PR1_ALU_op(PR1_ALU_op), .PR1_sel_ALU_src_reg2(PR1_sel_ALU_src_reg2),
 		.PR1_sel_ALU_src_const(PR1_sel_ALU_src_const), .PR1_MEM_write(PR1_MEM_write),
 		.PR1_MEM_read(PR1_MEM_read), .PR1_sel_RF_write_src_ALU(PR1_sel_RF_write_src_ALU),
 		.PR1_sel_RF_write_src_MEM(PR1_sel_RF_write_src_MEM),
-		.PR1_RF_write_en(PR1_RF_write_en), .PR1_sel_Cin_alu(PR1_RF_write_en),
+		.PR1_RF_write_en(PR1_RF_write_en), .PR1_sel_Cin_alu(PR1_sel_Cin_alu),
 		.PR1_sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count),
 		.PR1_RF_r2(PR1_RF_r2), 
 
@@ -206,6 +217,21 @@ module data_path(clk, rst);
 		.sel_first(PR2_sel_ALU_src_reg2), .sel_second(PR2_sel_ALU_src_const), .sel_third(PR2_sel_ALU_src_shift_count), 	
 		.out(alu_in2)
 	);
+
+	// Flip flops
+	
+	
+	register #(.WORD_LENGTH(1)) C(	
+		.clk(clk), .rst(rst),	
+		.ld(PR2_sel_Cin_alu), .in(C_in_alu), .out(C_out)	
+	);
+	
+	
+	register #(.WORD_LENGTH(1)) Z(	
+		.clk(clk), .rst(rst), 
+		.ld(PR2_sel_Cin_alu), .in(Z_in_alu), .out(Z_out)	
+	);
+	
 
 	// PIPE-LINE REGISTERS
 	
@@ -304,21 +330,6 @@ module data_path(clk, rst);
 	);
 
 
-	
-	// Flip flops
-	
-	
-	register #(.WORD_LENGTH(1)) C(	
-		.clk(clk), .rst(rst),	
-		.ld(sel_Cin_alu), .in(C_in_alu), .out(C_out)	
-	);
-	
-	
-	register #(.WORD_LENGTH(1)) Z(	
-		.clk(clk), .rst(rst), .ld(sel_Cin_alu),	
-		.in(Z_in_alu), .out(Z_out)	
-	);
-	
 
 endmodule
 	
