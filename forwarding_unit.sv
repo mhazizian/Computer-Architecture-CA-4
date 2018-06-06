@@ -20,11 +20,11 @@ module forwarding_unit (
 				forwardA = 2;
 			if (PR3_rd == PR2_rt && PR3_rd != 3'b000)
 				forwardB = 2;
-
-		end else if (PR4_RF_write_en) begin
-			if ((PR4_rd == PR2_rs) && (~PR3_RF_write_en || PR3_rd != PR2_rs) && PR4_rd != 3'b000)
+		end 
+		if (PR4_RF_write_en) begin
+			if ((PR4_rd == PR2_rs) && (~PR3_RF_write_en || PR3_rd != PR2_rs) && (PR4_rd != 3'b000))
 				forwardA = 1;
-			if ((PR4_rd == PR2_rt) && (~PR3_RF_write_en || PR3_rd != PR2_rt) && PR4_rd != 3'b000)
+			if ((PR4_rd == PR2_rt) && (~PR3_RF_write_en || PR3_rd != PR2_rt) && (PR4_rd != 3'b000))
 				forwardB = 1;
 		end
 

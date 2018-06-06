@@ -28,13 +28,13 @@ module data_path(clk, rst);
 		PR3_RF_write_en, 
 
 		PR1_IF_ID_write_en, PC_write_en, control_signals_en,
-		MEM_write, RF_write_en;
+		MEM_write, RF_write_en, flush;
 	
 	logic [`INSTRUCTION_LEN - 1 : 0] PR0_instruction,
 		PR1_instruction, PR2_instruction, PR3_instruction, 	
 		PR4_instruction;
 	
-	logic [`ADDRESS_LEN - 1 : 0] next_pc, current_pc, 
+	logic [`ADDRESS_LEN - 1 : 0] next_pc, current_pc,
 		pc_plus_offset, stack_out, PR0_PC_plus1, PR1_PC_plus1;
 			
 	logic [`WORD_LEN - 1 : 0] alu_in2, 	
@@ -59,9 +59,9 @@ module data_path(clk, rst);
 	
 	// PC block
 	
-//	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(1'b1), .in(next_pc), .out(current_pc));
+	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(PC_write_en), .in(next_pc), .out(current_pc));
 	
-	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(PC_write_en), .in(PR0_PC_plus1), .out(current_pc));
+	// register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(PC_write_en), .in(PR0_PC_plus1), .out(current_pc));
 	
 	incrementer #(.WORD_LENGTH(12)) PC_inc(
 		.in(current_pc), .out(PR0_PC_plus1)	
@@ -76,7 +76,7 @@ module data_path(clk, rst);
 	
 	// PIPE-LINE REGISTERS
 
-	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .PR0_PC_plus1(PR0_PC_plus1),
+	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .flush(flush), .PR0_PC_plus1(PR0_PC_plus1),
 		.PR0_instruction(PR0_instruction),.PR1_PC_plus1(PR1_PC_plus1), .PR1_instruction(PR1_instruction),
 		.write_en(PR1_IF_ID_write_en)
 	);
@@ -140,7 +140,7 @@ module data_path(clk, rst);
 
 
 	adder #(.WORD_LENGTH(12)) PC_adder(
-		.first(PR1_PC_plus1), .second({4'b0, PR1_instruction[7:0]}), 
+		.first(PR1_PC_plus1), .second({4{PR1_instruction[7]}, PR1_instruction[7:0]}), 
 		.out(pc_plus_offset) // Handling sign extend 
 		
 	);
@@ -153,7 +153,7 @@ module data_path(clk, rst);
 
 	// PIPE-LINE REGISTERS
 
-	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .PR1_instruction(PR1_instruction),
+	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .flush(flush), .PR1_instruction(PR1_instruction),
 		.PR1_RF_out1(PR1_RF_out1), .PR1_RF_out2(PR1_RF_out2),
 		.PR1_ALU_op(PR1_ALU_op), .PR1_sel_ALU_src_reg2(PR1_sel_ALU_src_reg2),
 		.PR1_sel_ALU_src_const(PR1_sel_ALU_src_const), .PR1_MEM_write(PR1_MEM_write),
@@ -289,18 +289,21 @@ module data_path(clk, rst);
 
 		.control_signals_en(control_signals_en)
 	);
-/*		
-	///////%%%%%%%%%%%%%%%%%%%///////
+
+
+	// PC input selector
+
 	mux_4_to_1 #(.WORD_LENGTH(12)) MUX_PC_src(
-	.first(pc_plus1), .second(instruction[11:0]), .third(pc_plus_offset),
-	.fourth(stack_out), .sel_first(sel_PC_src_plus1),
-	.sel_second(sel_PC_src_const), .sel_third(sel_PC_src_offset),
-	.sel_fourth(sel_PC_src_stack), .out(next_pc)
-	
+		.first(PR0_PC_plus1), .second(PR1_instruction[11:0]), .third(pc_plus_offset),
+		.fourth(stack_out),
+
+		.sel_first(1'b1),
+		// .sel_first(sel_PC_src_plus1),
+		.sel_second(sel_PC_src_const), .sel_third(sel_PC_src_offset),
+		.sel_fourth(sel_PC_src_stack), .out(next_pc)
 	);
 
-	///////%%%%%%%%%%%%%%%%%%%///////
-	*/
+
 	
 	// Flip flops
 	
