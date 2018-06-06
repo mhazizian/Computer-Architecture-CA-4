@@ -25,7 +25,10 @@ module data_path(clk, rst);
 		PR2_sel_RF_write_src_MEM,  PR2_RF_write_en, PR2_sel_Cin_alu,
 		PR2_sel_ALU_src_shift_count,
 		PR3_sel_RF_write_src_MEM, PR3_sel_RF_write_src_ALU,
-		PR3_RF_write_en;
+		PR3_RF_write_en, 
+
+		PR1_IF_ID_write_en, PC_write_en, control_signals_en,
+		MEM_write, RF_write_en;
 	
 	logic [`INSTRUCTION_LEN - 1 : 0] PR0_instruction,
 		PR1_instruction, PR2_instruction, PR3_instruction, 	
@@ -58,7 +61,7 @@ module data_path(clk, rst);
 	
 //	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(1'b1), .in(next_pc), .out(current_pc));
 	
-	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(1'b1), .in(PR0_PC_plus1), .out(current_pc));
+	register #(.WORD_LENGTH(12)) PC(.clk(clk), .rst(rst), .ld(PC_write_en), .in(PR0_PC_plus1), .out(current_pc));
 	
 	incrementer #(.WORD_LENGTH(12)) PC_inc(
 		.in(current_pc), .out(PR0_PC_plus1)	
@@ -74,7 +77,9 @@ module data_path(clk, rst);
 	// PIPE-LINE REGISTERS
 
 	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .PR0_PC_plus1(PR0_PC_plus1),
-		.PR0_instruction(PR0_instruction),.PR1_PC_plus1(PR1_PC_plus1), .PR1_instruction(PR1_instruction));
+		.PR0_instruction(PR0_instruction),.PR1_PC_plus1(PR1_PC_plus1), .PR1_instruction(PR1_instruction),
+		.write_en(PR1_IF_ID_write_en)
+	);
 
 
 	// ###############################
@@ -94,12 +99,12 @@ module data_path(clk, rst);
 		.sel_PC_src_const(PR1_sel_PC_src_const), 	
 		.sel_PC_src_plus1(PR1_sel_PC_src_plus1), 	
 		.sel_PC_src_stack(PR1_sel_PC_src_stack),	
-		.MEM_write(PR1_MEM_write),
+		.MEM_write(MEM_write),
 		.MEM_read(PR1_MEM_read),	
 		.sel_RF_write_src_ALU(PR1_sel_RF_write_src_ALU), 	
 		.sel_RF_write_src_MEM(PR1_sel_RF_write_src_MEM),	
 		.sel_RF_read_reg2_src(PR1_sel_RF_read_reg2_src), 	
-		.RF_write_en(PR1_RF_write_en),	
+		.RF_write_en(RF_write_en),	
 		.sel_Cin_alu(PR1_sel_Cin_alu),
 		.push_stack(PR1_push_stack),
 		.pop_stack(PR1_pop_stack),	
@@ -140,6 +145,11 @@ module data_path(clk, rst);
 		
 	);
 
+	mux_2_to_1 #(.WORD_LENGTH(2)) MUX_hazard_unit(	
+		.first({MEM_write, RF_write_en}), .second(0), 
+		.sel_first(control_signals_en), .sel_second(~control_signals_en), 
+		.out({PR1_MEM_write, PR1_RF_write_en})
+	);
 
 	// PIPE-LINE REGISTERS
 
@@ -267,8 +277,17 @@ module data_path(clk, rst);
         .PR3_RF_write_en(PR3_RF_write_en), .PR3_MEM_read(PR3_MEM_read), 
         .PR3_rd(PR3_instruction[13:11]), 
         .PR4_RF_write_en(PR4_RF_write_en),
-        .PR4_rd(PR4_instruction[13:11]), .PR2_rs(PR2_instruction[10:8]), .PR2_rt(PR2_instruction[7:5]),
+        .PR4_rd(PR4_instruction[13:11]), .PR2_rs(PR2_instruction[10:8]), .PR2_rt(PR2_RF_r2),
+
         .forwardA(forwardA), .forwardB(forwardB)
+	);
+
+	hazard_unit hazard_unit(
+		.PR2_MEM_read(PR2_MEM_read), .PR2_rd(PR2_instruction[13:11]), .PR1_rs(PR1_instruction[10:8]),
+		.PR1_rt(PR1_RF_r2), .PR2_opcode(PR2_instruction[18:14]),
+		.PR1_IF_ID_write_en(PR1_IF_ID_write_en), .PC_write_en(PC_write_en), 
+
+		.control_signals_en(control_signals_en)
 	);
 /*		
 	///////%%%%%%%%%%%%%%%%%%%///////
