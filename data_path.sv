@@ -39,9 +39,13 @@ module data_path(clk, rst);
 		PR1_RF_out1, PR1_RF_out2, PR2_RF_out1,	
 		PR2_RF_out2, PR2_alu_out, PR3_alu_out,	
 		PR3_RF_out2, PR3_MEM_out, PR4_MEM_out, 
-		PR4_alu_out, PR4_RF_out2;	
+		PR4_alu_out, PR4_RF_out2, PR2_RF_out2_forward, 
+		PR2_alu_in1;	
 		
-	logic [2:0] register_file_reg2_input;
+	logic [2:0] PR1_RF_r2,
+		PR2_RF_r2;
+
+	logic [1:0] forwardA, forwardB;
 	
 	logic [3:0] PR1_ALU_op, PR2_ALU_op;
 
@@ -110,7 +114,7 @@ module data_path(clk, rst);
 		.write_data(PR4_RF_Wdata),	
 		.write_reg_en(PR4_RF_write_en), 	
 		.read_reg1(PR1_instruction[10:8]), 	
-		.read_reg2(register_file_reg2_input),	
+		.read_reg2(PR1_RF_r2),	
 		.read_data1(PR1_RF_out1), .read_data2(PR1_RF_out2)	
 	);
 	
@@ -118,7 +122,7 @@ module data_path(clk, rst);
 	mux_2_to_1 #(.WORD_LENGTH(3)) MUX_RF_second_src(	
 		.first(PR1_instruction[13:11]), .second(PR1_instruction[7:5]), 
 		.sel_first(PR1_sel_RF_read_reg2_src), .sel_second(~PR1_sel_RF_read_reg2_src), 
-		.out(register_file_reg2_input)
+		.out(PR1_RF_r2)
 	);
 	
 	// Stack block
@@ -147,6 +151,7 @@ module data_path(clk, rst);
 		.PR1_sel_RF_write_src_MEM(PR1_sel_RF_write_src_MEM),
 		.PR1_RF_write_en(PR1_RF_write_en), .PR1_sel_Cin_alu(PR1_RF_write_en),
 		.PR1_sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count),
+		.PR1_RF_r2(PR1_RF_r2), 
 
 		// Outputs:
 		.PR2_instruction(PR2_instruction), .PR2_RF_out1(PR2_RF_out1), .PR2_RF_out2(PR2_RF_out2),
@@ -155,7 +160,8 @@ module data_path(clk, rst);
 		.PR2_sel_RF_write_src_ALU(PR2_sel_RF_write_src_ALU),
 		.PR2_sel_RF_write_src_MEM(PR2_sel_RF_write_src_MEM),
 		.PR2_RF_write_en(PR2_RF_write_en), .PR2_sel_Cin_alu(PR2_sel_Cin_alu),
-		.PR2_sel_ALU_src_shift_count(PR2_sel_ALU_src_shift_count), .PR2_ALU_op(PR2_ALU_op)
+		.PR2_sel_ALU_src_shift_count(PR2_sel_ALU_src_shift_count), .PR2_ALU_op(PR2_ALU_op), 
+		.PR2_RF_r2(PR2_RF_r2)
 	);
 
 	
@@ -168,14 +174,25 @@ module data_path(clk, rst);
 	
 	
 	ALU ALU_unit(
-		.alu_in1(PR2_RF_out1), .alu_in2(alu_in2), .cin(C_out), 	
+		.alu_in1(PR2_alu_in1), .alu_in2(alu_in2), .cin(C_out), 	
 		.opcode(PR2_ALU_op), .alu_out(PR2_alu_out), 
 		.cout(C_in_alu), .Z(Z_in_alu)
 	);
 	
-	
+	mux_3_to_1 #(.WORD_LENGTH(8)) MUX_forwardA(	
+		.first(PR2_RF_out1), .second(PR4_RF_Wdata), .third(PR3_alu_out),	
+		.sel_first(~forwardA[1] & ~forwardA[0]), .sel_second(~forwardA[1] & forwardA[0]), .sel_third(forwardA[1] & ~forwardA[0]), 	
+		.out(PR2_alu_in1)
+	);
+
+	mux_3_to_1 #(.WORD_LENGTH(8)) MUX_forwardB(	
+		.first(PR2_RF_out2), .second(PR4_RF_Wdata), .third(PR3_alu_out),	
+		.sel_first(~forwardB[1] & ~forwardB[0]), .sel_second(~forwardB[1] & forwardB[0]), .sel_third(forwardB[1] & ~forwardB[0]), 	
+		.out(PR2_RF_out2_forward)
+	);
+
 	mux_3_to_1 #(.WORD_LENGTH(8)) MUX_ALU_src(	
-		.first(PR2_RF_out2), .second(PR2_instruction[7:0]), .third({5'b0, PR2_instruction[7:5]}),	
+		.first(PR2_RF_out2_forward), .second(PR2_instruction[7:0]), .third({5'b0, PR2_instruction[7:5]}),	
 		.sel_first(PR2_sel_ALU_src_reg2), .sel_second(PR2_sel_ALU_src_const), .sel_third(PR2_sel_ALU_src_shift_count), 	
 		.out(alu_in2)
 	);
@@ -193,7 +210,7 @@ module data_path(clk, rst);
 		.PR3_instruction(PR3_instruction), .PR3_MEM_write(PR3_MEM_write), .PR3_MEM_read(PR3_MEM_read),
 		.PR3_sel_RF_write_src_MEM(PR3_sel_RF_write_src_MEM), .PR3_RF_write_en(PR3_RF_write_en),
 		.PR3_sel_Cin_alu(PR3_sel_Cin_alu), .PR3_sel_RF_write_src_ALU(PR3_sel_RF_write_src_ALU),
-		.PR2_RF_out2(PR2_RF_out2), .PR3_RF_out2(PR3_RF_out2),
+		.PR2_RF_out2(PR2_RF_out2_forward), .PR3_RF_out2(PR3_RF_out2),
 		.PR3_alu_out(PR3_alu_out)
 
 	);
@@ -245,7 +262,14 @@ module data_path(clk, rst);
 	// #########################################
 	// ########### THERE IS NO STAGE ###########
 	// #########################################		
-		
+
+	forwarding_unit forwarding_unit(
+        .PR3_RF_write_en(PR3_RF_write_en), .PR3_MEM_read(PR3_MEM_read), 
+        .PR3_rd(PR3_instruction[13:11]), 
+        .PR4_RF_write_en(PR4_RF_write_en),
+        .PR4_rd(PR4_instruction[13:11]), .PR2_rs(PR2_instruction[10:8]), .PR2_rt(PR2_instruction[7:5]),
+        .forwardA(forwardA), .forwardB(forwardB)
+	);
 /*		
 	///////%%%%%%%%%%%%%%%%%%%///////
 	mux_4_to_1 #(.WORD_LENGTH(12)) MUX_PC_src(

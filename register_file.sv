@@ -18,24 +18,22 @@ module register_file #(parameter integer WORD_LENGTH, ID_LENGTH) (
 	
 // Generate 4 regsiters
 
-	register #(.WORD_LENGTH(WORD_LENGTH)) register0(.clk(clk), .rst(rst), .ld(ld_reg[0]), .in(0), .out(acc[0]));
+	register_rf #(.WORD_LENGTH(WORD_LENGTH)) register0(.clk(clk), .rst(rst), .ld(ld_reg[0]), .in(0), .out(acc[0]));
 
 	generate for (i = 1; i < WORD_LENGTH; i = i + 1)
 		begin
-			register #(.WORD_LENGTH(WORD_LENGTH)) registers(.clk(clk), .rst(rst), .ld(ld_reg[i]), .in(write_data), .out(acc[i]));
+			register_rf #(.WORD_LENGTH(WORD_LENGTH)) registers(.clk(clk), .rst(rst), .ld(ld_reg[i]), .in(write_data), .out(acc[i]));
 		end
 	endgenerate
 
-// Read registers on posedge of clock
+// Read registers combinational
 	
-	always @(posedge clk, read_reg1, read_reg2) begin
-		read_data1 = acc[read_reg1];
-		read_data2 = acc[read_reg2];
-	end
+	assign read_data1 = acc[read_reg1];
+	assign read_data2 = acc[read_reg2];
 
-// Write regsiter on posedge of clock
+// Write regsiter on negedge of clock
 	
-	always @(posedge clk, write_reg_en, write_reg) begin
+	always @(negedge clk, write_reg_en, write_reg) begin
 		for ( j = 0; j < WORD_LENGTH; j = j + 1)	ld_reg[j] = 1'b0;
 		if (write_reg_en)	ld_reg[write_reg] = 1'b1;
 	end
