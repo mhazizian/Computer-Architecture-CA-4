@@ -9,7 +9,7 @@ module Stack(clk, address, push, pop, stack_out);
 	
 	assign stack_out = stack[pointer];	
 	
-	always @(posedge clk) begin	
+	always @(negedge clk) begin	
 		if(pop)	begin
 			pointer <= pointer - 3'b01;		
 		end

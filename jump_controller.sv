@@ -42,6 +42,7 @@ module jump_controller (
 		if (opcode[5:2] ==`NON_CONDITIONAL_JUMP_TYPE_OPCODE) begin
 			flush_PR1 = 1;
 			sel_PC_src_const = 1;
+			sel_PC_src_plus1 = 0;
 
 			if (opcode[5:1] == `JSB_OPCODE) 
 				push_stack = 1;
@@ -51,6 +52,7 @@ module jump_controller (
 			pop_stack = 1;
 			sel_PC_src_stack = 1;
 			flush_PR1 = 1;
+			sel_PC_src_plus1 = 0;
 		end
 	end
 
