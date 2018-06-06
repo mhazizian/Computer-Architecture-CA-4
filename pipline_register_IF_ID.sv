@@ -10,8 +10,8 @@ module PR1_IF_ID(clk, rst, write_en, PR0_PC_plus1, PR0_instruction, PR1_PC_plus1
 
 	always@(posedge clk, posedge rst) begin
 		if(rst) begin
-			// PR1_PC_plus1 <= 0;
-			// PR1_instruction <= 0;
+			PR1_PC_plus1 <= 0;
+			PR1_instruction <= 0;
 		end
 		else begin
 			if (write_en) begin

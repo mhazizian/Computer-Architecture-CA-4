@@ -284,7 +284,7 @@ module data_path(clk, rst);
 
 	hazard_unit hazard_unit(
 		.PR2_MEM_read(PR2_MEM_read), .PR2_rd(PR2_instruction[13:11]), .PR1_rs(PR1_instruction[10:8]),
-		.PR1_rt(PR1_RF_r2), .PR2_opcode(PR2_instruction[18:14]),
+		.PR1_rt(PR1_RF_r2), .PR1_opcode(PR1_instruction[18:14]),
 		.PR1_IF_ID_write_en(PR1_IF_ID_write_en), .PC_write_en(PC_write_en), 
 
 		.control_signals_en(control_signals_en)

@@ -33,10 +33,10 @@ module PR3_EX_MEM(
 
 	always@(posedge clk, posedge rst) begin
 		if(rst) begin
-			// {
-			// 	PR3_instruction, PR3_RF_out2,  PR3_MEM_write, PR3_MEM_read, PR3_sel_RF_write_src_ALU, 
-			// 	PR3_sel_RF_write_src_MEM,  PR3_RF_write_en, PR3_sel_Cin_alu, PR3_ALU_op, PR3_alu_out
-			// } <= 0;
+			{
+				PR3_instruction, PR3_RF_out2,  PR3_MEM_write, PR3_MEM_read, PR3_sel_RF_write_src_ALU, 
+				PR3_sel_RF_write_src_MEM,  PR3_RF_write_en, PR3_sel_Cin_alu, PR3_ALU_op, PR3_alu_out
+			} <= 0;
 		end
 		else begin
 			PR3_instruction <= PR2_instruction;
