@@ -324,12 +324,12 @@ module data_path(clk, rst);
 		.control_signals_en(control_signals_en)
 	);
 
-
+	
 	// PC input selector
 
 	mux_5_to_1 #(.WORD_LENGTH(12)) MUX_PC_src(
 		.first(PR0_PC_plus1), .second(PR1_instruction[11:0]), .third(PR1_PC_plus_offset),
-		.fourth(stack_out), .fifth(PR2_pc_plus_offset),
+		.fourth(stack_out), .fifth(PR2_PC_plus_offset),
 
 		// .sel_first(1'b1),
 		.sel_first(sel_PC_src_plus1 & ~PR2_sel_PC_src_offset),
