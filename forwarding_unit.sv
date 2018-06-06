@@ -15,16 +15,16 @@ module forwarding_unit (
 		forwardA = 0;
 		forwardB = 0;
 
-		if (PR3_RF_write_en & ~PR3_MEM_read) begin
+		if (PR3_RF_write_en && ~PR3_MEM_read) begin
 			if (PR3_rd == PR2_rs)
 				forwardA = 2;
 			if (PR3_rd == PR2_rt)
 				forwardB = 2;
 
 		end else if (PR4_RF_write_en) begin
-			if ((PR4_rd == PR2_rs) & (~PR3_RF_write_en | PR3_rd != PR2_rs))
+			if ((PR4_rd == PR2_rs) && (~PR3_RF_write_en || PR3_rd != PR2_rs))
 				forwardA = 1;
-			if ((PR4_rd == PR2_rt) & (~PR3_RF_write_en | PR3_rd != PR2_rt))
+			if ((PR4_rd == PR2_rt) && (~PR3_RF_write_en || PR3_rd != PR2_rt))
 				forwardB = 1;
 		end
 
