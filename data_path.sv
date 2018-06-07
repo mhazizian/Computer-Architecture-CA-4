@@ -54,7 +54,7 @@ module data_path(clk, rst);
 	
 	logic [3:0] PR1_ALU_op, PR2_ALU_op;
 
-	logic PR1_is_equal;
+	// logic PR1_is_equal;
 
 	// ###############################
 	// ########### STAGE 0 ###########
@@ -120,7 +120,10 @@ module data_path(clk, rst);
 		.read_data1(PR1_RF_out1), .read_data2(PR1_RF_out2)	
 	);
 	
-	assign PR1_is_equal = ((PR1_RF_out1 == PR1_RF_out2) ? 1 : 0); 
+	// assign PR1_is_equal = ((PR1_RF_out1 == PR1_RF_out2) ? 1 : 0);
+	// assign PR1_is_equal = (PR1_instruction[18:17] == `REGISTER_TYPE_OPCODE) ?
+	// 		((PR1_RF_out1 == PR1_RF_out2) ? 1 : 0) :
+	// 		()
 		
 	mux_2_to_1 #(.WORD_LENGTH(3)) MUX_RF_second_src(	
 		.first(PR1_instruction[13:11]), .second(PR1_instruction[7:5]), 
@@ -136,7 +139,8 @@ module data_path(clk, rst);
 	// Jump controller
 
 	jump_controller jump_controller(
-		.opcode(PR1_instruction[18:13]), .is_equal(PR1_is_equal),
+		.opcode(PR1_instruction[18:13]),
+		.z_out((Z_in_alu & PR2_sel_Cin_alu) | (Z_out & ~PR2_sel_Cin_alu)),
 		.push_stack(PR1_push_stack), .pop_stack(PR1_pop_stack), 
 		.sel_PC_src_const(sel_PC_src_const), .sel_PC_src_offset(PR1_sel_PC_src_offset),
 		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1_JC),

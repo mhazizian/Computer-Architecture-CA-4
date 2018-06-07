@@ -1,7 +1,7 @@
 `include "defines.sv"
 
 module jump_controller (
-	opcode, is_equal, PR2_jump_en, 
+	opcode, z_out, PR2_jump_en, 
 
 	// Outputs
 	push_stack, pop_stack, sel_PC_src_const, sel_PC_src_offset, 
@@ -9,7 +9,7 @@ module jump_controller (
 );
 
 	input [5:0] opcode;
-	input is_equal, PR2_jump_en;
+	input z_out, PR2_jump_en;
 
 	output logic 
 		push_stack, pop_stack, sel_PC_src_const, sel_PC_src_offset, 
@@ -26,12 +26,12 @@ module jump_controller (
 
 		if(opcode[5:3] == `CONDITIONAL_JUMP_TYPE_OPCODE && (~PR2_jump_en))begin
 			case (opcode[2:1])			
-				`BZ_FN : if (is_equal) begin
+				`BZ_FN : if (z_out) begin
 					sel_PC_src_offset = 1;
 					sel_PC_src_plus1 = 0;
 					flush_PR1 = 1;
 				end
-				`BNZ_FN : if (~is_equal) begin
+				`BNZ_FN : if (~z_out) begin
 					sel_PC_src_offset = 1;
 					sel_PC_src_plus1 = 0;
 					flush_PR1 = 1;
