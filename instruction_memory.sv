@@ -26,7 +26,7 @@ module InstructionMemory(rst, address, instruction);
 
 		ins_memory[15] 	<= {2'b00, 3'b000, 3'b111, 3'b001, 3'b011, 5'b00110}; 		// R7 = R1 + R3
 		ins_memory[16] 	<= {2'b01, 3'b000, 3'b101, 3'b110, 8'b01111111}; 			// R5 = R6 + 127
-		ins_memory[17] 	<= {3'b100, 2'b01, 3'b111, 3'b000, 8'b11101001}; 			// save-memory: R7 to R0(260)
+		ins_memory[17] 	<= {3'b100, 2'b01, 3'b111, 3'b000, 8'b11010010}; 			// save-memory: R7 to R0(210)
 		ins_memory[19] 	<= {3'b101, 2'b11, 6'b111000, 8'b00000101}; 				// BrachNC is True pc = pc + 1 + 5 (To L1)
 
 		ins_memory[20] <= {6'b111100, 13'b0000000100000};							// return
@@ -34,7 +34,10 @@ module InstructionMemory(rst, address, instruction);
 		ins_memory[25] 	<= {2'b01, 3'b000, 3'b101, 3'b101, 8'b01111111}; 			// R5 = R5 + 127	
 		ins_memory[26] 	<= {3'b110, 2'b00, 3'b101, 3'b101, 3'b010, 5'b00000};		// R5 = R5 << 2
 
-		ins_memory[27] <= {5'b11100, 2'b11, 12'b000000110100};						// JSB to adr = 52
+		ins_memory[27] 	<= {3'b100, 2'b00, 3'b001, 3'b000, 8'b11101011}; 			// load-memory: R0(233) to R1
+		ins_memory[28] 	<= {2'b01, 3'b000, 3'b010, 3'b001, 8'b00000001}; 			// R2 = R1 + 1
+
+		ins_memory[29] <= {5'b11100, 2'b11, 12'b000000110100};						// JMP to adr = 52
 
 	end
 	
