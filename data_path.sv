@@ -139,7 +139,8 @@ module data_path(clk, rst);
 		.opcode(PR1_instruction[18:13]), .is_equal(PR1_is_equal),
 		.push_stack(PR1_push_stack), .pop_stack(PR1_pop_stack), 
 		.sel_PC_src_const(sel_PC_src_const), .sel_PC_src_offset(PR1_sel_PC_src_offset),
-		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1_JC)
+		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1_JC),
+		.PR2_jump_en(PR2_sel_PC_src_offset)
 	);
 
 	// PC block
@@ -180,7 +181,6 @@ module data_path(clk, rst);
 		.PR2_RF_r2(PR2_RF_r2), .PR2_PC_plus_offset(PR2_PC_plus_offset)
 	);
 
-	
 	// ###############################
 	// ########### STAGE 2 ###########
 	// ###############################

@@ -21,7 +21,7 @@ module register_rf #(parameter integer WORD_LENGTH) (clk, rst, ld, in, out);
 	always@(negedge clk, posedge rst) 
 	begin
 		if (ld) out <= in;
-		if (rst) out <= 3;
+		if (rst) out <= 0;
 	end
 	
 endmodule
