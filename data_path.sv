@@ -95,14 +95,9 @@ module data_path(clk, rst);
 	
 	Controller CU(	
 		.instruction(PR1_instruction[18:13]),
-		.C_out(C_out) , 	
-		.Z_out(Z_out), .ALU_op(PR1_ALU_op), 
+		.ALU_op(PR1_ALU_op), 
 		.sel_ALU_src_reg2(PR1_sel_ALU_src_reg2), 	
 		.sel_ALU_src_const(PR1_sel_ALU_src_const),	
-		// .sel_PC_src_offset(PR1_sel_PC_src_offset), 	
-		// .sel_PC_src_const(PR1_sel_PC_src_const), 	
-		// .sel_PC_src_plus1(PR1_sel_PC_src_plus1), 	
-		// .sel_PC_src_stack(PR1_sel_PC_src_stack),	
 		.MEM_write(MEM_write),
 		.MEM_read(PR1_MEM_read),	
 		.sel_RF_write_src_ALU(PR1_sel_RF_write_src_ALU), 	
@@ -110,10 +105,7 @@ module data_path(clk, rst);
 		.sel_RF_read_reg2_src(PR1_sel_RF_read_reg2_src), 	
 		.RF_write_en(RF_write_en),	
 		.sel_Cin_alu(PR1_sel_Cin_alu),
-		// .push_stack(PR1_push_stack),
-		// .pop_stack(PR1_pop_stack),	
 		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count),
-		.sel_Cin_alu(PR2_sel_Cin_alu)
 	);
 
 	
