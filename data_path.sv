@@ -29,7 +29,7 @@ module data_path(clk, rst);
 		PR3_RF_write_en, 
 
 		PR1_IF_ID_write_en, PC_write_en, control_signals_en,
-		MEM_write, RF_write_en, flush_PR1_BP, flush_PR1_JC, flush_PR2;
+		MEM_write, RF_write_en, flush_PR1;
 	
 	logic [`INSTRUCTION_LEN - 1 : 0] PR0_instruction,
 		PR1_instruction, PR2_instruction, PR3_instruction, 	
@@ -80,7 +80,7 @@ module data_path(clk, rst);
 	
 	// PIPE-LINE REGISTERS
 
-	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .flush(flush_PR1_JC | flush_PR1_BP), .PR0_PC_plus1(PR0_PC_plus1),
+	PR1_IF_ID PR1_IF_ID_unit(.clk(clk), .rst(rst), .flush(flush_PR1), .PR0_PC_plus1(PR0_PC_plus1),
 		.PR0_instruction(PR0_instruction),.PR1_PC_plus1(PR1_PC_plus1), .PR1_instruction(PR1_instruction),
 		.write_en(PR1_IF_ID_write_en)
 	);
@@ -141,9 +141,11 @@ module data_path(clk, rst);
 	jump_controller jump_controller(
 		.opcode(PR1_instruction[18:13]),
 		.z_out((Z_in_alu & PR2_sel_Cin_alu) | (Z_out & ~PR2_sel_Cin_alu)),
+		.c_out((C_in_alu & PR2_sel_Cin_alu) | (C_out & ~PR2_sel_Cin_alu)),
+		
 		.push_stack(PR1_push_stack), .pop_stack(PR1_pop_stack), 
 		.sel_PC_src_const(sel_PC_src_const), .sel_PC_src_offset(PR1_sel_PC_src_offset),
-		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1_JC),
+		.sel_PC_src_stack(sel_PC_src_stack), .sel_PC_src_plus1(sel_PC_src_plus1), .flush_PR1(flush_PR1),
 		.PR2_jump_en(PR2_sel_PC_src_offset)
 	);
 
@@ -164,7 +166,7 @@ module data_path(clk, rst);
 
 	// PIPE-LINE REGISTERS
 
-	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .flush(flush_PR2), .PR1_instruction(PR1_instruction),
+	PR2_ID_EX PR2_ID_EX_unit(.clk(clk), .rst(rst), .PR1_instruction(PR1_instruction),
 		.PR1_RF_out1(PR1_RF_out1), .PR1_RF_out2(PR1_RF_out2),
 		.PR1_ALU_op(PR1_ALU_op), .PR1_sel_ALU_src_reg2(PR1_sel_ALU_src_reg2),
 		.PR1_sel_ALU_src_const(PR1_sel_ALU_src_const), .PR1_MEM_write(PR1_MEM_write),
@@ -217,11 +219,11 @@ module data_path(clk, rst);
 		.out(alu_in2)
 	);
 
-	branch_prediction branch_prediction(
-	.opcode(PR2_instruction[18:14]), .C_in(C_out), 
-	.sel_PC_src_offset(PR2_sel_PC_src_offset), .flush_PR1(flush_PR1_BP),
-	.flush_PR2(flush_PR2)
-	);
+	// branch_prediction branch_prediction(
+	// .opcode(PR2_instruction[18:14]), .C_in(C_out), 
+	// .sel_PC_src_offset(PR2_sel_PC_src_offset), .flush_PR1(flush_PR1_BP),
+	// .flush_PR2(flush_PR2)
+	// );
 
 	// Flip flops
 	
@@ -324,14 +326,15 @@ module data_path(clk, rst);
 	
 	// PC input selector
 
-	mux_5_to_1 #(.WORD_LENGTH(12)) MUX_PC_src(
+	mux_4_to_1 #(.WORD_LENGTH(12)) MUX_PC_src(
 		.first(PR0_PC_plus1), .second(PR1_instruction[11:0]), .third(PR1_PC_plus_offset),
-		.fourth(stack_out), .fifth(PR2_PC_plus_offset),
+		.fourth(stack_out),
 
 		// .sel_first(1'b1),
-		.sel_first(sel_PC_src_plus1 & ~PR2_sel_PC_src_offset),
-		.sel_second(sel_PC_src_const), .sel_third(PR1_sel_PC_src_offset),
-		.sel_fourth(sel_PC_src_stack), .sel_fifth(PR2_sel_PC_src_offset),
+		.sel_first(sel_PC_src_plus1),
+		.sel_second(sel_PC_src_const),
+		.sel_third(PR1_sel_PC_src_offset),
+		.sel_fourth(sel_PC_src_stack),
 
 		.out(next_pc)
 	);
