@@ -1,7 +1,7 @@
 `include "defines.sv"
 
 module jump_controller (
-	opcode, is_equal,
+	opcode, is_equal, PR2_jump_en, 
 
 	// Outputs
 	push_stack, pop_stack, sel_PC_src_const, sel_PC_src_offset, 
@@ -9,7 +9,7 @@ module jump_controller (
 );
 
 	input [5:0] opcode;
-	input is_equal;
+	input is_equal, PR2_jump_en;
 
 	output logic 
 		push_stack, pop_stack, sel_PC_src_const, sel_PC_src_offset, 
@@ -24,7 +24,7 @@ module jump_controller (
 
 		sel_PC_src_plus1 = 1;
 
-		if(opcode[5:3] == `CONDITIONAL_JUMP_TYPE_OPCODE)begin
+		if(opcode[5:3] == `CONDITIONAL_JUMP_TYPE_OPCODE && (~PR2_jump_en))begin
 			case (opcode[2:1])			
 				`BZ_FN : if (is_equal) begin
 					sel_PC_src_offset = 1;
@@ -39,7 +39,7 @@ module jump_controller (
 			endcase
 		end
 
-		if (opcode[5:2] ==`NON_CONDITIONAL_JUMP_TYPE_OPCODE) begin
+		if (opcode[5:2] ==`NON_CONDITIONAL_JUMP_TYPE_OPCODE && (~PR2_jump_en)) begin
 			flush_PR1 = 1;
 			sel_PC_src_const = 1;
 			sel_PC_src_plus1 = 0;
@@ -48,7 +48,7 @@ module jump_controller (
 				push_stack = 1;
 		end
 
-		if (opcode[5:0] == `OTHER_TYPE_OPCODE) begin
+		if (opcode[5:0] == `OTHER_TYPE_OPCODE && (~PR2_jump_en)) begin
 			pop_stack = 1;
 			sel_PC_src_stack = 1;
 			flush_PR1 = 1;

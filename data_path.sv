@@ -104,8 +104,8 @@ module data_path(clk, rst);
 		.sel_RF_write_src_MEM(PR1_sel_RF_write_src_MEM),	
 		.sel_RF_read_reg2_src(PR1_sel_RF_read_reg2_src), 	
 		.RF_write_en(RF_write_en),	
-		.sel_Cin_alu(PR1_sel_Cin_alu),
-		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count),
+		.sel_Cin_alu(sel_Cin_alu),
+		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count)
 	);
 
 	
@@ -151,10 +151,10 @@ module data_path(clk, rst);
 		.out(PR1_PC_plus_offset)	
 	);
 
-	mux_2_to_1 #(.WORD_LENGTH(2)) MUX_hazard_unit(	
-		.first({MEM_write, RF_write_en}), .second(0), 
+	mux_2_to_1 #(.WORD_LENGTH(3)) MUX_hazard_unit(	
+		.first({MEM_write, RF_write_en, sel_Cin_alu}), .second(0), 
 		.sel_first(control_signals_en), .sel_second(~control_signals_en), 
-		.out({PR1_MEM_write, PR1_RF_write_en})
+		.out({PR1_MEM_write, PR1_RF_write_en, PR1_sel_Cin_alu})
 	);
 
 	// PIPE-LINE REGISTERS
