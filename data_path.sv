@@ -112,7 +112,8 @@ module data_path(clk, rst);
 		.sel_Cin_alu(PR1_sel_Cin_alu),
 		// .push_stack(PR1_push_stack),
 		// .pop_stack(PR1_pop_stack),	
-		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count)
+		.sel_ALU_src_shift_count(PR1_sel_ALU_src_shift_count),
+		.sel_Cin_alu(PR2_sel_Cin_alu)
 	);
 
 	
